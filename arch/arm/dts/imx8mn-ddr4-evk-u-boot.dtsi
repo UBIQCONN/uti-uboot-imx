@@ -225,7 +225,7 @@
 };
 
 &fec1 {
-	phy-reset-gpios = <&gpio4 22 GPIO_ACTIVE_LOW>;
+	phy-reset-gpios = <&gpio3 25 GPIO_ACTIVE_LOW>;
 };
 
 &ethphy0 {
