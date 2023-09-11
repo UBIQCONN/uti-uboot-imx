@@ -53,8 +53,33 @@
 		status = "okay";
 	};
 
+	lcd_backlight: backlight {
+		compatible = "pwm-backlight";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_bl_enable>;
+		pwms = <&pwm1 0 700000 0>;	
+		brightness-levels = <0 100>;
+		num-interpolated-steps = <100>;
+		default-brightness-level = <50>;
+		enable-gpios = <&gpio1 10 0>;
+		status = "okay";
+	};
+
 	rm67199_panel {
-		compatible = "raydium,rm67199";
+
+                compatible = "et0240h6dma,st7785";
+		pinctrl-names = "default";
+                pinctrl-0 = <&pinctrl_mipi_dsi_en>;
+		backlight = <&lcd_backlight>; 
+                reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
+                dsi-lanes = <1>;
+                video-mode = <2>; /* 0: burst mode
+                                               * 1: non-burst mode with sync event
+                                               * 2: non-burst mode with sync pulse
+                                               * 3: command mode
+                                               */
+/*
+		compatible = "raydium,rm67191";
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_mipi_dsi_en>;
 		reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
@@ -115,20 +140,6 @@
 	scl-gpios = <&gpio5 16 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
 	status = "okay";
-
-	adv_bridge: adv7535@3d {
-		compatible = "adi,adv7533";
-		reg = <0x3d>;
-		adi,addr-cec = <0x3c>;
-		adi,dsi-lanes = <4>;
-		status = "okay";
-
-		port {
-			adv7535_from_dsim: endpoint {
-				remote-endpoint = <&dsim_to_adv7535>;
-			};
-		};
-	};
 
 	ptn5110: tcpc@50 {
 		compatible = "nxp,ptn5110";
@@ -205,12 +216,6 @@
 	status = "okay";
 
 	port@1 {
-		dsim_to_adv7535: endpoint {
-			remote-endpoint = <&adv7535_from_dsim>;
-		};
-	};
-
-	port@2 {
 		dsim_to_rm67191: endpoint {
 			remote-endpoint = <&rm67191_from_dsim>;
 		};
@@ -484,6 +489,18 @@
 	pinctrl_wdog: wdoggrp {
 		fsl,pins = <
 			MX8MN_IOMUXC_GPIO1_IO02_WDOG1_WDOG_B		0x166
+		>;
+	};
+
+	pinctrl_pwm_1: pwm1grp {
+		fsl,pins = <
+			MX8MN_IOMUXC_GPIO1_IO01_PWM1_OUT	0x6		/* SODIMM 19 */
+		>;
+	};
+
+	pinctrl_bl_enable: blgrp {
+		fsl,pins = <
+			MX8MN_IOMUXC_GPIO1_IO10_GPIO1_IO10	0x16	
 		>;
 	};
 
