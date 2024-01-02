@@ -867,6 +867,7 @@ dtb-$(CONFIG_ARCH_IMX8M) += \
 	phycore-imx8mm.dtb \
 	imx8mn-ddr3l-evk.dtb \
 	imx8mn-ddr4-evk.dtb \
+	imx8mn-ddr4-sva500.dtb \
 	imx8mn-evk.dtb \
 	imx8mq-ddr3l-val.dtb \
 	imx8mq-ddr4-val.dtb \

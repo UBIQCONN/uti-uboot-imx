@@ -28,6 +28,9 @@ DECLARE_GLOBAL_DATA_PTR;
 #define UART_PAD_CTRL	(PAD_CTL_DSE6 | PAD_CTL_FSEL1)
 #define WDOG_PAD_CTRL	(PAD_CTL_DSE6 | PAD_CTL_ODE | PAD_CTL_PUE | PAD_CTL_PE)
 
+#define LCD_RESET IMX_GPIO_NR(1, 8)
+
+
 static iomux_v3_cfg_t const uart_pads[] = {
 	IMX8MN_PAD_UART2_RXD__UART2_DCE_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
 	IMX8MN_PAD_UART2_TXD__UART2_DCE_TX | MUX_PAD_CTRL(UART_PAD_CTRL),
@@ -294,6 +297,18 @@ int board_ehci_usb_phy_mode(struct udevice *dev)
 }
 
 #endif
+static iomux_v3_cfg_t ss_rst_gpio[] = {
+        IMX8MN_PAD_GPIO1_IO08__GPIO1_IO8 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+
+static void lcd_reset(void)
+{
+        imx_iomux_v3_setup_multiple_pads(ss_rst_gpio, ARRAY_SIZE(ss_rst_gpio));
+        gpio_request(LCD_RESET, "lcd_reset");
+        gpio_direction_output(LCD_RESET, 0);
+}
+
 
 #define DISPMIX				9
 #define MIPI				10
@@ -302,6 +317,7 @@ int board_init(void)
 {
 	struct arm_smccc_res res;
 
+	lcd_reset();
 #ifdef CONFIG_USB_TCPC
 	setup_typec();
 
